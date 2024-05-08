@@ -1,10 +1,12 @@
 import numpy as np
 import random
 
+import task
+
 
 class Evolution:
     def __init__(self, rand, field, chromosome_length, population_size):
-        self.random = rand
+        self.random = task.Optimizer.SEED
         self.field = field
         self.chromosome_length = chromosome_length
         self.population_size = population_size
@@ -48,6 +50,7 @@ class Evolution:
         return child
 
     def random_chromosome(self):
+        np.random.seed(self.random)
         return np.random.choice([True, False], size=self.chromosome_length)
 
 

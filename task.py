@@ -6,7 +6,7 @@ class Optimizer:
     POPULATION_SIZE = 5000
     ITERATIONS = 10
     CHROMOSOME_LENGTH = 83
-    SEED = 1488
+    SEED = 42
 
     @staticmethod
     def optimize(field):
@@ -16,9 +16,8 @@ class Optimizer:
         population = [evolution.random_chromosome() for _ in range(Optimizer.POPULATION_SIZE)]
 
         for _ in range(Optimizer.ITERATIONS):
-            mutated_population = [evolution.mutate(chromosome) for chromosome in population]
-            selected_population = evolution.select(mutated_population)
-            population = evolution.crossover(selected_population)
+            # создайте здесь своего муравья используя реализованные методы в Evolution
+            pass
 
         # After final iteration, select the best chromosomes
         final_population = evolution.select(population)
