@@ -17,6 +17,10 @@ class Optimizer:
 
         for _ in range(Optimizer.ITERATIONS):
             # создайте здесь своего муравья используя реализованные методы в Evolution
+            # Возможный вариант реализации:
+            # Проведите несколько мутаций с каждой особью
+            # Сделайте селекцию
+            # Сделайте кроссовер
             pass
 
         # After final iteration, select the best chromosomes
