@@ -47,6 +47,13 @@ class GameField:
         df = pd.read_csv(filename, header=None, sep=";", names=colname)
         self.init_field = df.values
 
+    def get_max_answer(self):
+        count = 0
+        for col in self.init_field:
+            for i in col:
+                count += (i == 1)
+        return count
+
     def check_time(self):
         cur_time = time.time()
         if cur_time - self.start_time > self.MAX_TIME:
