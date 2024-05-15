@@ -1,5 +1,7 @@
 import copy
 import collections
+import time
+
 import numpy as np
 import pandas as pd
 
@@ -23,6 +25,7 @@ class GameField:
     S_EMPTY = "0"
     MOVE_MAX_COUNT = 200
     FIELD_SIZE = 32  # Assuming the field is always 32x32
+    MAX_TIME = 5*60
 
     class Cell:
         EMPTY = 0
@@ -36,13 +39,21 @@ class GameField:
 
     def __init__(self):
         self.init_field = np.zeros((self.FIELD_SIZE, self.FIELD_SIZE), dtype=int)
+        self.start_time = time.time()
+        #print(self.start_time)
 
     def fill(self, filename):
         colname = [f"col{i}" for i in range(self.FIELD_SIZE)]
         df = pd.read_csv(filename, header=None, sep=";", names=colname)
         self.init_field = df.values
 
+    def check_time(self):
+        cur_time = time.time()
+        if cur_time - self.start_time > self.MAX_TIME:
+            raise Exception("The maximum running time of the program has been exceeded.")
+
     def testAnt(self, chromosome):
+        self.check_time()
         from Ant import Ant  # Assuming Ant class has been defined and is in ant.py
         ant = Ant(chromosome)
         field = copy.deepcopy(self.init_field)
