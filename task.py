@@ -1,8 +1,9 @@
-from Еvolution import Evolution
+from Evolution import Evolution
 import random
 
 
 class Optimizer:
+    # эти константы НЕ желательно менять:
     POPULATION_SIZE = 5000
     ITERATIONS = 10
     CHROMOSOME_LENGTH = 83
@@ -10,22 +11,18 @@ class Optimizer:
 
     @staticmethod
     def optimize(field):
-        evolution = Evolution(field, Optimizer.CHROMOSOME_LENGTH, Optimizer.POPULATION_SIZE)
+        evolut = Evolution(field, Optimizer.CHROMOSOME_LENGTH, Optimizer.POPULATION_SIZE)
 
-        # population = [evolution.random_chromosome(Optimizer.SEED) for _ in range(Optimizer.POPULATION_SIZE)]
-        population = evolution.random_chromosome(Optimizer.SEED)
+        population = evolut.random_chromosome(Optimizer.SEED)
         for _ in range(Optimizer.ITERATIONS):
             # создайте здесь своего муравья используя реализованные методы в Evolution
             # Возможный вариант реализации:
             # Проведите несколько мутаций с каждой особью
             # Сделайте селекцию
             # Сделайте кроссовер
-            mutated_population = [evolution.mutate(chromosome) for chromosome in population]
-            population = evolution.crossover(mutated_population)
-            mutated_population = [evolution.mutate(chromosome) for chromosome in population]
-            population = evolution.select(mutated_population)
+            pass
 
-        # After final iteration, select the best chromosomes
-        final_population = evolution.select(population)
-        # The best chromosome is the first in the sorted list
+        # После последней итерации выбираем наилучшего муравья (наилучшую последовательность хромосом)
+        final_population = evolut.select(population)
+        # наилучшая последовательность хромосом находится в начале отсортированного списка
         return final_population[0]
