@@ -1,5 +1,6 @@
+import copy
+
 from GameField import *
-from enum import Enum
 
 
 class Ant:
@@ -13,9 +14,8 @@ class Ant:
         if len(chromosome) != Ant.CHROMOSOME_LENGTH:
             raise RuntimeError("Incorrect chromosome length!")
 
-        self.chromosome = chromosome
+        self.chromosome = copy.deepcopy(chromosome)
         self.states = [Ant.State(i) for i in range(Ant.STATES_COUNT)]
-        self.curState = None
         self.chromosomePos = 0
 
         self.chromosomePos = Ant.BITS_IN_STATE_C
@@ -66,12 +66,11 @@ class Ant:
         MOVE_FORWARD, TURN_LEFT, TURN_RIGHT, NO = range(4)
 
     class State:
-        num = 0
-        nextStateNum = dict()
-        nextAction = dict()
 
         def __init__(self, num):
             self.num = num
+            self.nextStateNum = {}
+            self.nextAction = {}
 
         def addNextState(self, forwCell, nextStateNum: int):
             self.nextStateNum[forwCell] = nextStateNum

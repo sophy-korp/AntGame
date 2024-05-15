@@ -1,4 +1,7 @@
+import copy
+import collections
 import numpy as np
+import pandas as pd
 
 
 class Direction:
@@ -7,6 +10,12 @@ class Direction:
 
     def get_move(self):
         return self.move
+
+
+def compare_direction(direct1: Direction, direct2: Direction):
+    l1 = direct1.get_move()
+    l2 = direct2.get_move()
+    return l1[0] == l2[0] and l1[1] == l2[1]
 
 
 class GameField:
@@ -29,25 +38,20 @@ class GameField:
         self.init_field = np.zeros((self.FIELD_SIZE, self.FIELD_SIZE), dtype=int)
 
     def fill(self, filename):
-        with open(filename, 'r') as file:
-            for line_num, line in enumerate(file):
-                self.fill_line(line_num, line.strip())
-
-    def fill_line(self, line_num, line):
-        cells = line.split(self.FILE_SPLITTER)
-        for i, cell in enumerate(cells):
-            self.init_field[line_num, i] = self.Cell.EMPTY if cell == self.S_EMPTY else self.Cell.APPLE
+        colname = [f"col{i}" for i in range(self.FIELD_SIZE)]
+        df = pd.read_csv(filename, header=None, sep=";", names=colname)
+        self.init_field = df.values
 
     def testAnt(self, chromosome):
         from Ant import Ant  # Assuming Ant class has been defined and is in ant.py
         ant = Ant(chromosome)
-        field = np.copy(self.init_field)
+        field = copy.deepcopy(self.init_field)
         eaten_apple_count = 0
         ant_direction = self.direction.RIGHT
         ant_pos = [0, 0]
 
         for _ in range(self.MOVE_MAX_COUNT):
-            forward_pos = self.get_forward_cell_coord(ant_pos, ant_direction, self.FIELD_SIZE)
+            forward_pos = self.get_forward_cell_coord(ant_pos, ant_direction)
             forward_cell = field[forward_pos[0], forward_pos[1]]
             ant_action = ant.getAction(forward_cell)
 
@@ -61,22 +65,40 @@ class GameField:
 
         return eaten_apple_count
 
-    def get_forward_cell_coord(self, cur_pos, direction: Direction, field_size):
+    def get_forward_cell_coord(self, cur_pos, direction: Direction):
         move = direction.get_move()
         new_pos = [cur_pos[0] + move[0], cur_pos[1] + move[1]]
-        new_pos = [n % field_size for n in new_pos]  # Wrap around for toroidal field
+        # new_pos = [n % field_size for n in new_pos]  # Wrap around for toroidal field
+        if self.isInField(new_pos):
+            return new_pos
+
+        # Если муравей выходит за поле, то заходит с другой стороны (поле кольцевое)
+        if new_pos[0] >= self.FIELD_SIZE:
+            new_pos[0] = 0
+        elif new_pos[0] < 0:
+            new_pos[0] = self.FIELD_SIZE - 1
+
+        elif new_pos[1] >= self.FIELD_SIZE:
+            new_pos[1] = 0
+        else:
+            new_pos[1] = self.FIELD_SIZE - 1
         return new_pos
+
+    def isInField(self, cellCoord) -> bool:
+        return self.FIELD_SIZE > cellCoord[0] >= 0 and self.FIELD_SIZE > cellCoord[1] >= 0
 
     def get_new_direction(self, old_direction, action):
         from Ant import Ant
         if action == Ant.Action.TURN_LEFT:
-            return self.direction.LEFT if old_direction == self.direction.UP else \
-                   self.direction.DOWN if old_direction == self.direction.LEFT else \
-                   self.direction.RIGHT if old_direction == self.direction.DOWN else \
+            return self.direction.LEFT if compare_direction(old_direction, self.direction.UP) else \
+                   self.direction.DOWN if compare_direction(old_direction, self.direction.LEFT) else \
+                   self.direction.RIGHT if compare_direction(old_direction, self.direction.DOWN) else \
                    self.direction.UP
+
         elif action == Ant.Action.TURN_RIGHT:
-            return self.direction.RIGHT if old_direction == self.direction.UP else \
-                   self.direction.UP if old_direction == self.direction.LEFT else \
-                   self.direction.LEFT if old_direction == self.direction.DOWN else \
+            return self.direction.RIGHT if compare_direction(old_direction, self.direction.UP) else \
+                   self.direction.UP if compare_direction(old_direction, self.direction.LEFT) else \
+                   self.direction.LEFT if compare_direction(old_direction, self.direction.DOWN) else \
                    self.direction.DOWN
+
         return old_direction

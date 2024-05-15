@@ -14,13 +14,13 @@ def main():
     print("Max is 89")
     grade = 0
 
-    if result >= 50:
+    if 50 <= result < 60:
         grade = 1
-    elif result >= 60:
+    elif 80 > result >= 60:
         grade = 2
-    elif result >= 80:
+    elif 82 > result >= 80:
         grade = 3
-    elif result >= 82:
+    elif 84 > result >= 82:
         grade = 4
     elif result >= 84:
         grade = 5

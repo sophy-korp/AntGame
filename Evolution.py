@@ -1,13 +1,12 @@
+import copy
+
 import numpy as np
 import random
 
-import task
-
 
 class Evolution:
-    def __init__(self, rand, field, chromosome_length, population_size):
-        self.random = task.Optimizer.SEED
-        self.field = field
+    def __init__(self, field, chromosome_length, population_size):
+        self.field = copy.deepcopy(field)
         self.chromosome_length = chromosome_length
         self.population_size = population_size
 
@@ -16,7 +15,7 @@ class Evolution:
         return mutated if self.field.testAnt(mutated) > self.field.testAnt(chromosome) else chromosome
 
     def invert_bit(self, chromosome, index):
-        mutated = np.copy(chromosome)
+        mutated = copy.deepcopy(chromosome)
         mutated[index] = not mutated[index]
         return mutated
 
@@ -29,7 +28,7 @@ class Evolution:
         next_generation = []
         ind = 0
         if len(parents) % 2 == 1:
-            next_generation.append(np.copy(parents[0]))
+            next_generation.append(copy.deepcopy(parents[0]))
             ind += 1
 
         for i in range(ind, len(parents), 2):
@@ -40,24 +39,22 @@ class Evolution:
         return next_generation[:self.population_size]
 
     def make_child(self, parent1, parent2):
-        child = np.copy(parent1)
+        child = copy.deepcopy(parent1)
+        parent2_0 = copy.deepcopy(parent2)
         quarter = self.chromosome_length // 4
         half = self.chromosome_length // 2
 
-        child[:quarter] = parent2[:quarter]
-        child[half:half + quarter] = parent2[half:half + quarter]
+        child[:quarter] = parent2_0[:quarter]
+        child[half:half + quarter] = parent2_0[half:half + quarter]
 
         return child
 
-    def random_chromosome(self):
-        np.random.seed(self.random)
-        return np.random.choice([True, False], size=self.chromosome_length)
-
-
-# if name == "main":
-#     # Example usage
-#     field = GameField()
-#     evolution = Evolution(field, chromosome_length=100, population_size=50)
-#     initial_population = [evolution.random_chromosome() for _ in range(50)]
-#     selected = evolution.select(initial_population)
-#     offspring = evolution.crossover(selected)
+    def random_chromosome(self, SEED):
+        random.seed(SEED)
+        population = []
+        for _ in range(self.population_size):
+            chromosome = []
+            for _ in range(self.chromosome_length):
+                chromosome.append(random.choice([True, False]))
+            population.append(chromosome)
+        return population
