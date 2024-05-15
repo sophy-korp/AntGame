@@ -42,13 +42,9 @@ def main():
         print(f"Error during optimization: {e}")
         grade = str(e)
 
-    with open('grade.json') as fp:
-        dictObj = json.load(fp)
-
-    with open('grade.json', 'r+') as file:
-        dictObj['grade'] = grade
-        file.write(json.dumps(dictObj))
-        file.close()
+    with open("grade.json", "w") as jsonFile:
+        data = {'grade': grade}
+        json.dump(data, jsonFile)
 
 
 if __name__ == "__main__":
