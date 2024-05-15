@@ -40,7 +40,7 @@ def main():
 
     except Exception as e:
         print(f"Error during optimization: {e}")
-        grade = e
+        grade = str(e)
 
     with open('grade.json') as fp:
         dictObj = json.load(fp)
