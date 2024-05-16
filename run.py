@@ -9,19 +9,12 @@ FIELD_FILENAME = "field.csv"
 def main():
     field = GameField()
     field.fill(FIELD_FILENAME)
-    TIMEOUT_SECONDS = 100
 
     try:
-        start_time = time.time()
         best_chromosome = Optimizer.optimize(field)
         result = field.testAnt(best_chromosome)
         print(f"Your result is {result}")
         print("Max is 89")
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        print(elapsed_time)
-        # if elapsed_time > TIMEOUT_SECONDS:
-        #     raise Exception("Test exceeded time limit.")
         max_answer = field.get_max_answer()
         grade = 0
 
